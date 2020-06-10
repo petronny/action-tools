@@ -14,7 +14,7 @@ sed \
 	-e "s|MAKEFLAGS=.*|MAKEFLAGS=-j$(nproc)|" \
 	-i /etc/makepkg.conf
 dbus-uuidgen --ensure=/etc/machine-id
-useradd -m pkgbuild -g wheel
+useradd -m pkgbuild -g wheel -d ~
 echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 pkgbase=$(cat "${GITHUB_EVENT_PATH}" | jq -r .action)
