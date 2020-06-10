@@ -20,7 +20,7 @@ sed \
 	-i /etc/makepkg.conf
 dbus-uuidgen --ensure=/etc/machine-id
 useradd -m pkgbuild -d ${HOME}
-chown -R pkgbuild:root ~
+chown -R pkgbuild:root ~ ${GITHUB_WORKSPACE}
 
 pkgbase=$(cat "${GITHUB_EVENT_PATH}" | jq -r .action)
 echo "::set-output name=pkgbase::${pkgbase}"
