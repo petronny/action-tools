@@ -22,3 +22,4 @@ git config --global user.name "calil"
 
 pkgbase=$(cat "${GITHUB_EVENT_PATH}" | jq -r .action)
 echo "::set-output name=pkgbase::${pkgbase}"
+echo "::set-output name=home::${HOME}"
