@@ -2,7 +2,11 @@
 set -e
 
 rm -rf ${GITHUB_WORKFLOW}
-git checkout -- ${GITHUB_WORKFLOW}/{lilac.py,lilac.yaml} || echo
+
+for i in lilac.py lilac.yaml
+do
+	git checkout -- ${GITHUB_WORKFLOW}/${i} || ;
+done
 
 cd ${GITHUB_WORKFLOW}
 
