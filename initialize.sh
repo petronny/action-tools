@@ -17,5 +17,8 @@ dbus-uuidgen --ensure=/etc/machine-id
 useradd -m pkgbuild -g wheel -d ~
 echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
+git config --global user.email "calil@jingbei.li"
+git config --global user.name "calil"
+
 pkgbase=$(cat "${GITHUB_EVENT_PATH}" | jq -r .action)
 echo "::set-output name=pkgbase::${pkgbase}"
