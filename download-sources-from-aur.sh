@@ -8,4 +8,4 @@ else
 	pkgbase=$(realpath .)
 	pkgbase=$(basename "${pkgbase}")
 fi
-wget -O - "https://aur.archlinux.org/cgit/aur.git/snapshot/${pkgbase}.tar.gz" | tar zxvf -
+wget -O - "https://aur.archlinux.org/cgit/aur.git/snapshot/${pkgbase}.tar.gz" | tar zxvf - --strip-components=1
