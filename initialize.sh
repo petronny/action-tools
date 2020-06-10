@@ -2,6 +2,7 @@
 set -ex
 
 find ${GITHUB_WORKSPACE}/action-tools -type f -exec cp {} /usr/bin \;
+cp -r ${GITHUB_WORKSPACE}/lilac ~
 
 pacman -Syu --noconfirm
 pacman -S --noconfirm --needed base-devel devtools dbus git jq wget
