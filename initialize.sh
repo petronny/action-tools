@@ -4,7 +4,7 @@ set -ex
 find ${GITHUB_WORKSPACE}/action-tools -type f -exec cp {} /usr/bin \;
 
 pacman -Syu --noconfirm
-pacman -S --noconfirm --needed base-devel devtools dbus git wget
+pacman -S --noconfirm --needed base-devel devtools dbus git jq wget
 
 mkdir -p ~/{packages,sources,srcpackages,makepkglogs}
 sed \
@@ -17,3 +17,6 @@ sed \
 dbus-uuidgen --ensure=/etc/machine-id
 useradd -m pkgbuild
 chown -R pkgbuild:root ~
+
+pkgbase=$(cat "${GITHUB_EVENT_PATH}" | jq -r .action)
+echo "::set-output name=pkgbase::${pkgbase}"
