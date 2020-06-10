@@ -19,7 +19,7 @@ sed \
 	-e "s|#LOGDEST=.*|LOGDEST='$HOME/makepkglogs'|" \
 	-i /etc/makepkg.conf
 dbus-uuidgen --ensure=/etc/machine-id
-useradd -m pkgbuild
+useradd -m pkgbuild -d ${HOME}
 chown -R pkgbuild:root ~
 
 pkgbase=$(cat "${GITHUB_EVENT_PATH}" | jq -r .action)
