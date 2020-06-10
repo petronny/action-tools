@@ -3,7 +3,6 @@ set -ex
 
 find ${GITHUB_WORKSPACE}/action-tools -type f -exec cp {} /usr/bin \;
 cp -r ${GITHUB_WORKSPACE}/lilac ~
-cp -r ${GITHUB_WORKSPACE}/arch4edu ~
 cp ${GITHUB_WORKSPACE}/lilac/recv_gpg_keys /usr/bin
 
 pacman -Syu --noconfirm
