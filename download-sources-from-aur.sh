@@ -1,4 +1,6 @@
 #!/bin/sh
+set -e
+
 if [ -n "$1" ]
 then
 	pkgbase=$1

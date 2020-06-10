@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 rm -rf ${GITHUB_WORKFLOW}
 git checkout -- ${GITHUB_WORKFLOW}/{lilac.py,lilac.yaml}

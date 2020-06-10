@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/sh
+set -e
+
 cp -r ${GITHUB_WORKSPACE}/action-tools/*.sh /usr/bin
 
 pacman -Syu --noconfirm
