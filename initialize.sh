@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-cp -r ${GITHUB_WORKSPACE}/action-tools/*.sh /usr/bin
+find ${GITHUB_WORKSPACE}/action-tools/*.sh -type f -exec cp {} /usr/bin \;
 
 pacman -Syu --noconfirm
 pacman -S --noconfirm --needed base-devel devtools dbus git wget
