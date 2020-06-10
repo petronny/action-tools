@@ -7,7 +7,7 @@ cp -r ${GITHUB_WORKSPACE}/lilac ~
 pacman -Syu --noconfirm
 pacman -S --noconfirm --needed base-devel devtools dbus git \
 	jq \
-	pyalpm python-lxml python-requests python-yaml
+	pyalpm python-lxml python-requests python-toposort python-yaml
 
 mkdir -p ~/{packages,sources,srcpackages,makepkglogs}
 sed \
