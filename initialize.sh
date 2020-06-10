@@ -13,3 +13,5 @@ sed \
 dbus-uuidgen --ensure=/etc/machine-id
 useradd -m pkgbuild
 chown -R pkgbuild:root ~
+
+cp -r ${GITHUB_WORKFLOW}/action-tools/*.sh /usr/bin
