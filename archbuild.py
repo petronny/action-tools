@@ -19,7 +19,7 @@ parser.add_argument('--time_limit',
 
 args = parser.parse_args()
 
-commands = [args.build_prefix]
+commands = [args.build_prefix + '-build']
 if args.archbuild_args:
     commands.append(args.archbuild_args)
 commands.append('--')
