@@ -31,5 +31,6 @@ commands.append('--noprogressbar')
 commands.append(args.makepkg_args)
 commands.append('1>"$HOME"/extra-x86_64-build.log 2>&1')
 
+print('cd ${GITHUB_WORKFLOW}')
 print(' '.join(commands))
 print('ls -l "$HOME"/{packages,sources,srcpackages,makepkglogs}')
