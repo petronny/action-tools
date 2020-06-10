@@ -1,4 +1,6 @@
 #!/bin/bash
+cp -r ${GITHUB_WORKSPACE}/action-tools/*.sh /usr/bin
+
 pacman -Syu --noconfirm
 pacman -S --noconfirm --needed base-devel devtools dbus git wget
 
@@ -13,5 +15,3 @@ sed \
 dbus-uuidgen --ensure=/etc/machine-id
 useradd -m pkgbuild
 chown -R pkgbuild:root ~
-
-cp -r ${GITHUB_WORKFLOW}/action-tools/*.sh /usr/bin
