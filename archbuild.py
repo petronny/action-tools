@@ -29,6 +29,5 @@ if args.makechrootpkg_args:
 commands.append('--')
 commands.append('--noprogressbar')
 commands.append(args.makepkg_args)
-commands.append('1>"$HOME"/build.log 2>&1')
 
 print(' '.join(commands))
