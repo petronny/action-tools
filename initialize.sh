@@ -19,8 +19,9 @@ sed \
 	-e "s|#LOGDEST=.*|LOGDEST='$HOME/makepkglogs'|" \
 	-i /etc/makepkg.conf
 dbus-uuidgen --ensure=/etc/machine-id
-useradd -m pkgbuild -d ~
+useradd -m pkgbuild -g wheel -d ~
 chown -R pkgbuild:root ~
+echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 pkgbase=$(cat "${GITHUB_EVENT_PATH}" | jq -r .action)
 echo "::set-output name=pkgbase::${pkgbase}"
