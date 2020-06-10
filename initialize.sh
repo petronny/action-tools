@@ -1,5 +1,5 @@
 #!/bin/sh
-set -e
+set -ex
 
 find ${GITHUB_WORKSPACE}/action-tools -type f -exec cp {} /usr/bin \;
 
