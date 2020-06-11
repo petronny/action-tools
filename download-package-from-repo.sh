@@ -15,7 +15,7 @@ depends=$(LANG=C $pacman -Si $package | sed -n '/^Depends/{s/^.*://;p}')
 
 for i in $depends
 do
-	assume_installed+="--assume-installed $i"
+	assume_installed+=" --assume-installed $i"
 done
 
 $pacman -Sw $package $assume_installed
