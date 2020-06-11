@@ -1,7 +1,7 @@
 #!/bin/sh
 cp ${GITHUB_WORKSPACE}/keyring/* /usr/share/pacman/keyrings/
 
-mkdir -p ~/pacman/arch4edu
+mkdir -p ~/pacman/arch4edu/db
 cd ~/pacman/arch4edu
 
 pacman-key --gpgdir gnupg --init
