@@ -18,4 +18,4 @@ do
 	assume_installed+="--assume-installed $i"
 done
 
-$pacman -Sw $package
+$pacman -Sw $package $assume_installed
