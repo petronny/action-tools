@@ -10,5 +10,12 @@ repo=~/pacman/$repo
 pacman_conf=$repo/pacman.conf
 dbpath=$repo/db
 gpgdir=$repo/gnupg
+pacman="fakeroot pacman --arch $arch --config $pacman_conf --dbpath $dbpath --gpgdir $gpgdir --cachedir $path --noconfirm"
+depends=$(LANG=C $pacman -Si $package | sed -n '/^Depends/{s/^.*://;p}')
 
-fakeroot pacman -Sw $package --arch $arch --config $pacman_conf --dbpath $dbpath --gpgdir $gpgdir --cachedir $path
+for i in $depends
+do
+	assume_installed+="--assume-installed $i"
+done
+
+$pacman -Sw $package
