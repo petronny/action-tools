@@ -9,7 +9,7 @@ do
 	dirname=$(dirname $i)
 	if [ $(echo $filename | grep : -c) -gt 0 ]
 	then
-		mv $dirname/filename $dirname/$(echo $filename | sed 's/:/COLON/g')
+		mv $dirname/$filename $dirname/$(echo $filename | sed 's/:/COLON/g')
 	fi
 done
 
