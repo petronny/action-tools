@@ -1,7 +1,7 @@
 #!/bin/sh
 set -ex
 
-pwd
+cd ~/arch4edu
 
 for i in $(find . -type f -name '*.pkg.tar.zst')
 do
