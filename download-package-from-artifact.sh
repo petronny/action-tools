@@ -9,6 +9,8 @@ artifact_id=$(curl "https://api.github.com/repos/${repo}/actions/artifacts" |
 	jq ".artifacts | .[] | select(.name==\"${pkgbase}\") | .id" |
 	head -n1)
 
+[ -z "$artifact_id" ] && exit 1
+
 mkdir -p $path
 cd $path
 
