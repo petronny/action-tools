@@ -5,7 +5,12 @@ repo=$1
 pkgbase=$2
 pkgname=$3
 path=$4
-type=$5
+
+artifact_id=$(curl "https://api.github.com/repos/${repo}/actions/artifacts" |
+	jq ".artifacts | .[] | select(.name==\"${pkgbase}\") | .id" |
+	head -n1)
+
+[ -z "$artifact_id" ] && exit 1
 
 mkdir -p $path
 cd $path
@@ -14,7 +19,12 @@ bsdtar tf $pkgbase.zip || rm -f $pkgbase.zip
 
 if [ ! -f $pkgbase.zip ]
 then
-	download-file-from-artifact.sh $repo $pkgbase.zip $path
+	set +x
+	curl -L "https://api.github.com/repos/$repo/actions/artifacts/$artifact_id/zip" \
+		-H "Accept: application/vnd.github.everest-preview+json" \
+		-H "Authorization: token $TOKEN" \
+		-o $pkgbase.zip
+	set -x
 fi
 
 package=$(bsdtar tf ${pkgbase}.zip |
