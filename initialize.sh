@@ -1,7 +1,7 @@
 #!/bin/sh
 set -ex
 
-find ${GITHUB_WORKSPACE}/action-tools -type f -exec cp {} /usr/bin \;
+find ${GITHUB_WORKSPACE}/action-tools -type f -name '*.sh' -exec cp {} /usr/bin \;
 cp -r ${GITHUB_WORKSPACE}/lilac ~
 cp ${GITHUB_WORKSPACE}/lilac/recv_gpg_keys /usr/bin
 
