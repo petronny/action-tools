@@ -20,6 +20,6 @@ echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 git config --global user.email "calil@jingbei.li"
 git config --global user.name "calil"
 
-pkgbase=$(cat "${GITHUB_EVENT_PATH}" | jq -r .action)
+pkgbase=$(jq -r .action "${GITHUB_EVENT_PATH}")
 echo "::set-output name=pkgbase::${pkgbase}"
 echo "::set-output name=home::${HOME}"
