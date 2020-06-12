@@ -30,3 +30,15 @@ def download_repo_depends(package=None):
             run_cmd(['download-package-from-repo.sh', pkgbase, 'arch4edu', 'x86_64', '~/repo_depends'])
 
         download_repo_depends(i)
+
+def action_main(build_prefix=None, build_args=None, makechrootpkg_args=None, makepkg_args=None):
+
+    if makechrootpkg_args is None:
+        makechrootpkg_args = []
+
+    download_repo_depends()
+
+    for i in Path('~/repo_depends').rglob('*.pkg.tar*'):
+        makechrootpkg_args += ['-I', i]
+
+    single_main(build_prefix=build_prefix, build_args=build_args, makechrootpkg_args=makechrootpkg_args, makepkg_args=makepkg_args)
