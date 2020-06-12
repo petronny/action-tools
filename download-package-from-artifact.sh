@@ -3,7 +3,6 @@ repo=$1
 pkgbase=$2
 pkgname=$3
 path=$4
-token=$5
 
 artifact_id=$(curl "https://api.github.com/repos/${repo}/actions/artifacts" |
 	jq ".artifacts | .[] | select(.name==\"${pkgbase}\") | .id" |
@@ -20,7 +19,7 @@ if [ ! -f $pkgbase.zip ]
 then
 	curl -L "https://api.github.com/repos/$repo/actions/artifacts/$artifact_id/zip" \
 		-H "Accept: application/vnd.github.everest-preview+json" \
-		-H "Authorization: token $token" \
+		-H "Authorization: token $TOKEN" \
 		-o $pkgbase.zip
 fi
 
