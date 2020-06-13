@@ -26,7 +26,12 @@ def download_repo_depends(package=None):
             pkgbase, pkgname = i, i
 
         try:
-            run_cmd(['download-package-from-artifact.sh', 'petronny/arch4edu', pkgbase, pkgname, '~/repo_depends'])
+            run_cmd(['download-package-from-artifact.zsh',
+                '--repo', 'petronny/arch4edu',
+                '--file', pkgbase,
+                '--type', 'package',
+                '--pkgname', pkgname,
+                '--save-path', '~/repo_depends'])
         except:
             run_cmd(['download-package-from-repo.sh', pkgbase, 'arch4edu', 'x86_64', '~/repo_depends'])
 
