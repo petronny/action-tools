@@ -22,12 +22,12 @@ if [ -z "$workflow" ]
 then
 	url="https://api.github.com/repos/${repo}/actions/artifacts?per_page=100"
 else
-	url="https://api.github.com/repos/${repo}/actions/runs/${workflow_id}/artifacts?per_page=100"
+	url="https://api.github.com/repos/${repo}/actions/runs/${workflow}/artifacts"
 fi
 
 if [ -z "$workflow" ]
 then
-	[ -n "$json" ] && echo "Warning:\tNot saving json if no workflow id is specificed."
+	[ -n "$json" ] && echo "Warning:\tNot saving json if no workflow id is specificed." >> /dev/stderr
 	json="/dev/null"
 fi
 
@@ -35,7 +35,7 @@ artifact_id=$(curl -sS ${url} | tee > $json | jq ".artifacts | .[] | select(.nam
 
 if [ -z "$artifact_id" ]
 then
-	echo "Error:\tNo file named ${file} found."
+	echo "Error:\tFile ${file} not found." >> /dev/stderr
 	exit 1
 fi
 
