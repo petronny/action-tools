@@ -34,7 +34,7 @@ def download_repo_depends(package=None):
                 '--pkgname', pkgname,
                 '--save-path', '~/repo_depends'])
         except:
-            logging.error(traceback.print_exception())
+            logging.error(traceback.print_exc())
             run_cmd(['download-package-from-repo.sh', pkgbase, 'arch4edu', 'x86_64', '~/repo_depends'])
 
         download_repo_depends(i)
