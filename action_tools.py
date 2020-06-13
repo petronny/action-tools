@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import logging
+import traceback
 from lilaclib import *
 from pathlib import Path
 from lilac2.lilacyaml import load_lilac_yaml
@@ -33,6 +34,7 @@ def download_repo_depends(package=None):
                 '--pkgname', pkgname,
                 '--save-path', '~/repo_depends'])
         except:
+            logging.error(traceback.print_exception())
             run_cmd(['download-package-from-repo.sh', pkgbase, 'arch4edu', 'x86_64', '~/repo_depends'])
 
         download_repo_depends(i)
