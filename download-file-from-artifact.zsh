@@ -30,6 +30,7 @@ then
 	[ -n "$json" ] && echo "Warning:\tNot saving json if no workflow id is specificed." >> /dev/stderr
 	json="/dev/null"
 fi
+[ -z "$json" ] && json="/dev/null"
 
 artifact_id=$(curl -sS ${url} | tee > $json | jq ".artifacts | .[] | select(.name==\"${file}\") | .id" | head -n1)
 
