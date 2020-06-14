@@ -7,8 +7,12 @@ from pathlib import Path
 from lilac2.lilacyaml import load_lilac_yaml
 
 def download_repo_depends(package=None):
+
     if package:
-        path = Path('..') / package
+        if type(package) is tuple:
+            path = Path('..') / package[0]
+        else:
+            path = Path('..') / package
     else:
         path = Path('.')
 
