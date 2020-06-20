@@ -1,9 +1,6 @@
 #!/bin/sh
 set -ex
 
-cp -r ${GITHUB_WORKSPACE}/lilac ~
-cp ${GITHUB_WORKSPACE}/lilac/recv_gpg_keys /usr/bin
-
 pacman -Syu --noconfirm
 pacman -S --noconfirm --needed base-devel devtools dbus git \
 	jq zsh\
@@ -23,6 +20,7 @@ uuid=$(echo $pkgbase | cut -d' ' -f2)
 pkgbase=$(echo $pkgbase | cut -d' ' -f1)
 
 echo "::add-path::${GITHUB_WORKSPACE}/action-tools"
+echo "::add-path::${GITHUB_WORKSPACE}/lilac"
 echo "::set-output name=pkgbase::${pkgbase}"
 echo "::set-output name=uuid::${uuid}"
 echo "::set-output name=home::${HOME}"
