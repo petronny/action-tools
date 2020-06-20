@@ -25,6 +25,8 @@ else
 	url="https://api.github.com/repos/${repo}/actions/runs/${workflow}/artifacts"
 fi
 
+curl_args=(-L -sS -H "Accept: application/vnd.github.everest-preview+json" -H "Authorization: token $TOKEN" $url)
+
 if [ -z "$workflow" ]
 then
 	[ -n "$json" ] && echo "Warning:\tNot saving json if no workflow id is specificed." >> /dev/stderr
@@ -32,7 +34,7 @@ then
 fi
 [ -z "$json" ] && json="/dev/null"
 
-artifact_id=$(curl -sS ${url} | tee > $json | jq ".artifacts | .[] | select(.name==\"${file}\") | .id" | head -n1)
+artifact_id=$(curl ${curl_args} | tee > $json | jq ".artifacts | .[] | select(.name==\"${file}\") | .id" | head -n1)
 
 if [ -z "$artifact_id" ]
 then
