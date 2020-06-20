@@ -74,7 +74,7 @@ else
 	do
 		if [ $(echo $i | grep COLON -c) -gt 0 ]
 		then
-			mv $i $(echo $package | sed 's/COLON/:/g')
+			mv $i $(echo $i | sed 's/COLON/:/g')
 		fi
 	done
 fi
