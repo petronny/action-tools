@@ -11,13 +11,8 @@ cp keyring/* /usr/share/pacman/keyrings/
 pacman-key --gpgdir gnupg --init
 pacman-key --gpgdir gnupg --populate arch4edu
 
-sed \
-	-e '/^Include/d' \
-	-e '/^\[core\]/d' \
-	-e '/^\[extra\]/d' \
-	-e '/^\[community\]/d' \
-	-e '/^\[multilib\]/d' \
-	/etc/pacman.conf > pacman.conf
+echo [options] > pacman.conf
+pacman-conf | grep '^Architecture' >> pacman.conf
 echo [arch4edu] >> pacman.conf
 sed 's/#//' mirrorlist/mirrorlist.arch4edu >> pacman.conf
 
