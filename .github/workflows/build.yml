@@ -45,7 +45,7 @@ jobs:
           TOKEN: ${{ secrets.CALIL_GITHUB_TOKEN }}
           PYTHONPATH: ${{ github.workspace }}/lilac:${{ github.workspace }}/lilac/vendor:${{ github.workspace }}/action-tools
         run: |
-          cd ${GITHUB_WORKSPACE}/repo/${{ steps.initialization.outputs.pkgbase }}
+          cd ${GITHUB_WORKSPACE}/arch4edu/${{ steps.initialization.outputs.pkgbase }}
           ls -al
           set -o pipefail
           python lilac.py action | tee ${GITHUB_WORKSPACE}/build.log
@@ -64,7 +64,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ steps.initialization.outputs.pkgbase }}
-          path: ${{ github.workspace }}/repo/${{ steps.initialization.outputs.pkgbase }}/*.pkg.tar.zst
+          path: ${{ github.workspace }}/arch4edu/${{ steps.initialization.outputs.pkgbase }}/*.pkg.tar.zst
 
       - name: Upload commit patch
         uses: actions/upload-artifact@v2
