@@ -1,0 +1,87 @@
+name: build
+
+on:
+  repository_dispatch:
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux
+      options: --privileged
+      volumes:
+        - /sys/fs/cgroup:/sys/fs/cgroup
+
+    steps:
+      - name: Get time
+        id: time
+        run: echo "::set-output name=time::$(date +%F-%T)"
+
+      - name: Set up cache
+        uses: actions/cache@master
+        with:
+          path: /var/cache/pacman/pkg
+          key: pacman-cache-x86_64-${{ steps.time.outputs.time }}
+          restore-keys: pacman-cache-x86_64-
+
+      - uses: actions/checkout@master
+        with:
+          repository: petronny/action-tools
+          path: action-tools
+
+      - uses: actions/checkout@master
+        with:
+          repository: petronny/lilac
+          path: lilac
+
+      - name: Initialize
+        id: initialization
+        run: ${GITHUB_WORKSPACE}/action-tools/initialize.sh
+
+      - uses: actions/checkout@master
+        with:
+          repository: arch4edu/arch4edu
+          path: arch4edu
+
+      - run: configure-arch4edu.sh
+
+      - run: pre-build.sh
+
+      - name: Build the package with lilac
+        env:
+          TOKEN: ${{ secrets.CALIL_GITHUB_TOKEN }}
+        run: |
+          cd ~/arch4edu/${{ steps.initialization.outputs.pkgbase }}
+          ls -al
+          set -o pipefail
+          su pkgbuild -c "PYTHONPATH=~/lilac:~/lilac/vendor:${GITHUB_WORKSPACE}/action-tools ./lilac.py action" | tee ~/build.log
+          [ ${PIPESTATUS[0]} -eq 0 ] && [ $(git status --porcelain . | wc -l) -gt 0 ] git show . > ~/commit.patch
+
+      - run: post-build.sh
+
+      - name: Upload workflow id
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ steps.initialization.outputs.pkgbase }}.${{ steps.initialization.outputs.uuid }}
+          path: '~/workflow_id'
+
+      - name: Upload package
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ steps.initialization.outputs.pkgbase }}
+          path: ${{ steps.initialization.outputs.home }}/arch4edu/${{ steps.initialization.outputs.pkgbase }}/*.pkg.tar.zst
+
+      - name: Upload commit patch
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ steps.initialization.outputs.pkgbase }}.patch
+          path: '~/commit.patch'
+
+      - name: Upload build log
+        uses: actions/upload-artifact@v2
+        if: ${{ always() }}
+        with:
+          name: ${{ steps.initialization.outputs.pkgbase }}.log
+          path: '~/build.log'
