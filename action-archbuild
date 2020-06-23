@@ -13,6 +13,7 @@ export http_proxy=$(yq '.http_proxy' $config_file | jq -r '.')
 export https_proxy=$(yq '.https_proxy' $config_file | jq -r '.')
 repo=$(yq ".runner.\"$(basename $0)\"" $config_file | jq -r '.')
 artifacts_repo=$(yq ".repo.artifacts" $config_file | jq -r '.')
+eval artifacts_repo=$artifacts_repo
 
 [ "$http_proxy" = "null" ] && unset http_proxy
 [ "$https_proxy" = "null" ] && unset https_proxy
