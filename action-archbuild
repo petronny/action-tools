@@ -1,0 +1,94 @@
+#!/bin/zsh
+set -e
+
+zparseopts \
+	-skip-action=skip_action \
+	-runner:=runner
+
+config_file=$(realpath $0)
+config_file=$(dirname $config_file)/config.yaml
+
+export TOKEN=$(yq '.token' $config_file | jq -r '.')
+export http_proxy=$(yq '.http_proxy' $config_file | jq -r '.')
+export https_proxy=$(yq '.https_proxy' $config_file | jq -r '.')
+repo=$(yq ".runner.\"$(basename $0)\"" $config_file | jq -r '.')
+
+[ "$http_proxy" = "null" ] && unset http_proxy
+[ "$https_proxy" = "null" ] && unset https_proxy
+[ -n "$runner" ] && repo=${runner[2]}
+[ "$repo" = "null" ] && echo "No runner specific." >>/dev/stderr && exit 1
+
+package=$(realpath .)
+package=$(basename $package)
+uuid=$(uuidgen)
+
+if [ -z "$skip_action" ]
+then
+	curl -sS -X POST https://api.github.com/repos/${repo}/dispatches \
+		-H "Accept: application/vnd.github.everest-preview+json" \
+		-H "Authorization: token $TOKEN" \
+		--data "{\"event_type\": \"$package $uuid\"}"
+
+	while true
+	do
+		sleep 30
+		download-file-from-artifact.zsh \
+			--repo ${repo} \
+			--file $package.$uuid \
+			--type file \
+			--save-path /tmp || continue
+		break
+	done
+
+	workflow_id=$(cat /tmp/$package.$uuid)
+else
+	workflow_id=$(cat workflow_id)
+fi
+
+download-file-from-artifact.zsh \
+	--repo ${repo} \
+	--workflow $workflow_id \
+	--file $package.log \
+	--type file \
+	--save-path /tmp \
+	--save-json /tmp/$package.$uuid.artifacts.json || (echo "Error:\tDownload $package.log failed" >> /dev/stderr && exit 1)
+
+cat /tmp/$package.log >> /dev/stderr
+rm /tmp/$package.log
+
+download-file-from-artifact.zsh \
+	--repo ${repo} \
+	--workflow $workflow_id \
+	--file $package.patch \
+	--type file \
+	--save-path /tmp || (echo "Error:\tDownload $package.patch failed" >> /dev/stderr)
+
+git checkout -- artifact.json || :
+
+if [ -f /tmp/$package.patch ]
+then
+	for i in $(git status -s | grep " M" | cut -c 4-)
+	do
+		git checkout -- $i
+	done
+
+	for i in $(git status -s | grep "^A" | cut -c 4-)
+	do
+		rm $i
+	done
+
+	git apply /tmp/$package.patch
+	rm /tmp/$package.patch
+fi
+
+download-file-from-artifact.zsh \
+	--repo ${repo} \
+	--workflow $workflow_id \
+	--file $package \
+	--type package \
+	--save-path . || (echo "Error:\tDownload $package failed" && exit 1)
+
+[ -z "$skip_action" ] && mv /tmp/$package.$uuid workflow_id
+mv /tmp/$package.$uuid.artifacts.json artifacts.json
+
+git add workflow_id artifacts.json
