@@ -32,7 +32,7 @@ def download_repo_depends(package=None):
 
         try:
             run_cmd(['download-file-from-artifact.zsh',
-                '--repo', 'petronny/arch4edu',
+                '--use-json', path / '..' / pkgbase / 'artifacts.json',
                 '--file', pkgbase,
                 '--type', 'package',
                 '--pkgname', pkgname,

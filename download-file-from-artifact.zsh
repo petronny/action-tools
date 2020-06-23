@@ -8,7 +8,8 @@ zparseopts \
 	-type:=_type \
 	-pkgname:=pkgname \
 	-save-path:=_path \
-	-save-json:=json \
+	-save-json:=save_json \
+	-use-json:=use_json \
 
 repo=${repo[2]}
 workflow=${workflow[2]}
@@ -16,7 +17,8 @@ file=${file[2]}
 _type=${_type[2]}
 pkgname=${pkgname[2]}
 _path=${_path[2]}
-json=${json[2]}
+save_json=${save_json[2]}
+use_json=${use_json[2]}
 
 if [ -z "$workflow" ]
 then
@@ -30,11 +32,11 @@ curl_args=(-L -sS -H "Accept: application/vnd.github.everest-preview+json" -H "A
 if [ -z "$workflow" ]
 then
 	[ -n "$json" ] && echo "Warning:\tNot saving json if no workflow id is specificed." >> /dev/stderr
-	json="/dev/null"
+	save_json="/dev/null"
 fi
-[ -z "$json" ] && json="/dev/null"
+[ -z "$save_json" ] && save_json="/dev/null"
 
-artifact_id=$(curl ${curl_args} | tee > $json | jq ".artifacts | .[] | select(.name==\"${file}\") | .id" | head -n1)
+artifact_id=$( [ -z "$use_json" ] && curl ${curl_args} || cat ${use_json} | tee > $save_json | jq ".artifacts | .[] | select(.name==\"${file}\") | .id" | head -n1)
 
 if [ -z "$artifact_id" ]
 then
@@ -45,7 +47,13 @@ fi
 mkdir -p $_path
 cd $_path
 
-url="https://api.github.com/repos/$repo/actions/artifacts/$artifact_id/zip"
+if [ -z "$use_json" ]
+then
+	url="https://api.github.com/repos/$repo/actions/artifacts/$artifact_id/zip"
+else
+	url=$(cat ${use_json} | jq -r ".artifacts | .[] | select(.id==${artifact_id}) | .archive_download_url" | head -n1)
+fi
+
 curl_args=(-L -sS -H "Accept: application/vnd.github.everest-preview+json" -H "Authorization: token $TOKEN" $url)
 
 if [ "$_type" = "file" ]
