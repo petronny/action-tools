@@ -36,7 +36,7 @@ then
 fi
 [ -z "$save_json" ] && save_json="/dev/null"
 
-artifact_id=$( [ -z "$use_json" ] && curl ${curl_args} || cat ${use_json} | tee > $save_json | jq ".artifacts | .[] | select(.name==\"${file}\") | .id" | head -n1)
+artifact_id=$( ([ -z "$use_json" ] && curl ${curl_args} || cat ${use_json}) | tee > $save_json | jq ".artifacts | .[] | select(.name==\"${file}\") | .id" | head -n1)
 
 if [ -z "$artifact_id" ]
 then
