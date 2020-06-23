@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 import sys
 import logging
 import traceback
@@ -32,7 +33,7 @@ def download_repo_depends(package=None):
 
         try:
             run_cmd(['download-file-from-artifact.zsh',
-                '--use-json', path / '..' / pkgbase / 'artifacts.json',
+                '--use-json', '%s/artifacts/%s.json' % (os.environ['GITHUB_WORKSPACE'], pkgbase),
                 '--file', pkgbase,
                 '--type', 'package',
                 '--pkgname', pkgname,

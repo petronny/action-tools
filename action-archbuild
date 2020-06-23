@@ -2,7 +2,7 @@
 set -e
 
 zparseopts \
-	-skip-action=skip_action \
+	-use-workflow:=workflow_id \
 	-runner:=runner
 
 config_file=$(realpath $0)
@@ -12,17 +12,19 @@ export TOKEN=$(yq '.token' $config_file | jq -r '.')
 export http_proxy=$(yq '.http_proxy' $config_file | jq -r '.')
 export https_proxy=$(yq '.https_proxy' $config_file | jq -r '.')
 repo=$(yq ".runner.\"$(basename $0)\"" $config_file | jq -r '.')
+artifacts_repo=$(yq ".repo.artifacts" $config_file | jq -r '.')
 
 [ "$http_proxy" = "null" ] && unset http_proxy
 [ "$https_proxy" = "null" ] && unset https_proxy
 [ -n "$runner" ] && repo=${runner[2]}
 [ "$repo" = "null" ] && echo "No runner specific." >>/dev/stderr && exit 1
+workflow_id=${workflow_id[2]}
 
 package=$(realpath .)
 package=$(basename $package)
 uuid=$(uuidgen)
 
-if [ -z "$skip_action" ]
+if [ -z "$workflow_id" ]
 then
 	curl -sS -X POST https://api.github.com/repos/${repo}/dispatches \
 		-H "Accept: application/vnd.github.everest-preview+json" \
@@ -41,8 +43,6 @@ then
 	done
 
 	workflow_id=$(cat /tmp/$package.$uuid)
-else
-	workflow_id=$(cat workflow_id)
 fi
 
 download-file-from-artifact.zsh \
@@ -62,8 +62,6 @@ download-file-from-artifact.zsh \
 	--file $package.patch \
 	--type file \
 	--save-path /tmp || (echo "Error:\tDownload $package.patch failed" >> /dev/stderr)
-
-git checkout -- artifact.json || :
 
 if [ -f /tmp/$package.patch ]
 then
@@ -88,7 +86,17 @@ download-file-from-artifact.zsh \
 	--type package \
 	--save-path . || (echo "Error:\tDownload $package failed" && exit 1)
 
-[ -z "$skip_action" ] && mv /tmp/$package.$uuid workflow_id
-mv /tmp/$package.$uuid.artifacts.json artifacts.json
+if [ -n "$artifacts_repo" ]
+then
+	cd "$artifacts_repo"
+	cp /tmp/$package.$uuid.artifacts.json $package.json
+	git add $package.json
+	git commit -m "[${repo}] uploaded artifacts for $package" -m "https://github.com/$repo/actions/runs/$workflow_id"
+	while true
+	do
+		git push origin master && break || git pull --rebase origin master
+		sleep $(($RANDOM%10/10.0))
+	done
+fi
 
-git add workflow_id artifacts.json
+rm -f /tmp/$package.$uuid*

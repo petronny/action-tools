@@ -35,6 +35,11 @@ jobs:
           repository: petronny/lilac
           path: lilac
 
+      - uses: actions/checkout@master
+        with:
+          repository: petronny/action-artifacts
+          path: artifacts
+
       - name: Initialize
         id: initialization
         run: ${GITHUB_WORKSPACE}/action-tools/initialize.sh

@@ -1,6 +1,8 @@
 token: GITHUB_ACCESS_TOKEN
 http_proxy:
 https_proxy: "http://127.0.0.1:8123"
+repo:
+  artifacts: /home/petron/git/action-artifacts
 runner:
   action-extra-x86_64-build: petronny/action-runner-x86_64
   action-extra-x86_64-powerful-build:
