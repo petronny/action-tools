@@ -76,7 +76,7 @@ then
 		rm $i
 	done
 
-	git apply /tmp/$package.patch
+	git am /tmp/$package.patch
 	rm /tmp/$package.patch
 fi
 
@@ -90,6 +90,7 @@ download-file-from-artifact.zsh \
 if [ -n "$artifacts_repo" ]
 then
 	cd "$artifacts_repo"
+	git pull origin master
 	cp /tmp/$package.$uuid.artifacts.json $package.json
 	git add $package.json
 	git commit -m "[${repo}] uploaded artifacts for $package" -m "https://github.com/$repo/actions/runs/$workflow_id"
