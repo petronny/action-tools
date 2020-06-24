@@ -61,7 +61,7 @@ jobs:
           ls -al
           set -o pipefail
           su pkgbuild -c "PYTHONPATH=${GITHUB_WORKSPACE}/lilac:${GITHUB_WORKSPACE}/lilac/vendor:${GITHUB_WORKSPACE}/action-tools ./lilac.py action" | tee ~/build.log
-          [ ${PIPESTATUS[0]} -eq 0 ] && [ $(git show --pretty="" --name-only | wc -l) -gt 0 ] && git show . > ~/commit.patch || :
+          [ ${PIPESTATUS[0]} -eq 0 ] && git format-patch HEAD~1 . --stdout > ~/commit.patch || :
 
       - run: post-build.sh
 
