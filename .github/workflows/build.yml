@@ -37,7 +37,7 @@ jobs:
 
       - uses: actions/checkout@master
         with:
-          repository: petronny/action-artifacts
+          repository: arch4edu/action-artifacts
           path: artifacts
 
       - name: Initialize
