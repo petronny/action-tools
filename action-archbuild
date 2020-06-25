@@ -35,15 +35,12 @@ then
 	while true
 	do
 		sleep 30
-		download-file-from-artifact.zsh \
+		workflow_id=$(download-file-from-artifact.zsh \
 			--repo ${repo} \
 			--file $package.$uuid \
-			--type file \
-			--save-path /tmp || continue
+			--type file) || continue
 		break
 	done
-
-	workflow_id=$(cat /tmp/$package.$uuid)
 fi
 
 download-file-from-artifact.zsh \
@@ -51,20 +48,19 @@ download-file-from-artifact.zsh \
 	--workflow $workflow_id \
 	--file $package.log \
 	--type file \
-	--save-path /tmp \
-	--save-json /tmp/$package.$uuid.artifacts.json || (echo "Error:\tDownload $package.log failed" >> /dev/stderr && exit 1)
+	--save-json /tmp/$package.$uuid.artifacts.json > /tmp/$package.$uuid.log || exit 1
 
-cat /tmp/$package.log >> /dev/stderr
-rm /tmp/$package.log
+cat /tmp/$package.$uuid.log >> /dev/stderr
+rm /tmp/$package.$uuid.log
 
 download-file-from-artifact.zsh \
 	--repo ${repo} \
 	--workflow $workflow_id \
 	--file $package.patch \
-	--type file \
-	--save-path /tmp || (echo "Error:\tDownload $package.patch failed" >> /dev/stderr)
+	--type file > /tmp/$package.$uuid.patch ||
+	rm -f /tmp/$package.$uuid.patch
 
-if [ -f /tmp/$package.patch ]
+if [ -f /tmp/$package.$uuid.patch ]
 then
 	for i in $(git status -s | grep " M" | cut -c 4-)
 	do
@@ -76,8 +72,8 @@ then
 		rm $i
 	done
 
-	git am /tmp/$package.patch
-	rm /tmp/$package.patch
+	git apply /tmp/$package.$uuid.patch
+	rm /tmp/$package.$uuid.patch
 fi
 
 download-file-from-artifact.zsh \
@@ -85,7 +81,7 @@ download-file-from-artifact.zsh \
 	--workflow $workflow_id \
 	--file $package \
 	--type package \
-	--save-path . || (echo "Error:\tDownload $package failed" && exit 1)
+	--save-path . || exit 1
 
 if [ -n "$artifacts_repo" ]
 then
