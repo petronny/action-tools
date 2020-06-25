@@ -44,9 +44,6 @@ then
 	exit 1
 fi
 
-mkdir -p $_path
-cd $_path
-
 if [ -z "$use_json" ]
 then
 	url="https://api.github.com/repos/$repo/actions/artifacts/$artifact_id/zip"
@@ -58,8 +55,11 @@ curl_args=(-L -sS -H "Accept: application/vnd.github.everest-preview+json" -H "A
 
 if [ "$_type" = "file" ]
 then
-	curl $curl_args | bsdtar -xvf - -O > $file
+	curl $curl_args | bsdtar -xvf - -O
 else
+	mkdir -p $_path
+	cd $_path
+
 	if [ -z "$pkgname" ]
 	then
 		curl $curl_args | bsdtar -xvf -
@@ -73,7 +73,7 @@ else
 
 		if [ -z "$package" ]
 		then
-			echo "Error:\tNo package named ${pkgname} found in ${file}."
+			echo "Error:\tNo package named ${pkgname} found in ${file}." >> /dev/stderr
 			exit 2
 		fi
 
