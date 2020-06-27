@@ -1,7 +1,7 @@
 #!/bin/sh
 set -ex
 
-cd ~/arch4edu
+cd ${GITHUB_WORKSPACE}/arch4edu
 
 for i in $(find . -type f -name '*.pkg.tar.xz')
 do

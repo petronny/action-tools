@@ -6,25 +6,7 @@ on:
 jobs:
 
   build:
-    runs-on: ubuntu-latest
-    container:
-      image: archlinux
-      options: --privileged
-      volumes:
-        - /sys/fs/cgroup:/sys/fs/cgroup
-
-    steps:
-      - name: Get time
-        id: time
-        run: echo "::set-output name=time::$(date +%F-%T)"
-
-      - name: Set up cache
-        uses: actions/cache@master
-        with:
-          path: /var/cache/pacman/pkg
-          key: pacman-cache-x86_64-${{ steps.time.outputs.time }}
-          restore-keys: pacman-cache-x86_64-
-
+    runs-on: self-hosted
       - uses: actions/checkout@master
         with:
           path: action-tools
@@ -48,6 +30,11 @@ jobs:
           repository: arch4edu/arch4edu
           path: arch4edu
 
+      - uses: actions/checkout@master
+        with:
+          repository: arch4edu/mirrorlist
+          path: mirrorlist
+
       - run: configure-arch4edu.sh
 
       - run: pre-build.sh
@@ -55,11 +42,12 @@ jobs:
       - name: Build the package with lilac
         env:
           TOKEN: ${{ secrets.CALIL_GITHUB_TOKEN }}
+          PYTHONPATH: ${{ github.workspace }}/lilac:${{ github.workspace }}/lilac/vendor:${{ github.workspace }}/action-tools
         run: |
-          cd ~/arch4edu/${{ steps.initialization.outputs.pkgbase }}
+          cd ${GITHUB_WORKSPACE}/repo/${{ steps.initialization.outputs.pkgbase }}
           ls -al
           set -o pipefail
-          su pkgbuild -c "PYTHONPATH=${GITHUB_WORKSPACE}/lilac:${GITHUB_WORKSPACE}/lilac/vendor:${GITHUB_WORKSPACE}/action-tools python lilac.py action" | tee ~/build.log
+          python lilac.py action | tee ${GITHUB_WORKSPACE}/build.log
           [ ${PIPESTATUS[0]} -eq 0 ] && git format-patch HEAD~1 . --stdout > ~/commit.patch || rm -f ~/commit.patch
 
       - run: post-build.sh
@@ -69,23 +57,23 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ steps.initialization.outputs.pkgbase }}.${{ steps.initialization.outputs.uuid }}
-          path: '~/workflow_id'
+          path: ${{ github.workspace }}/workflow_id
 
       - name: Upload package
         uses: actions/upload-artifact@v2
         with:
           name: ${{ steps.initialization.outputs.pkgbase }}
-          path: ${{ steps.initialization.outputs.home }}/arch4edu/${{ steps.initialization.outputs.pkgbase }}/*.pkg.tar.zst
+          path: ${{ github.workspace }}/repo/${{ steps.initialization.outputs.pkgbase }}/*.pkg.tar.zst
 
       - name: Upload commit patch
         uses: actions/upload-artifact@v2
         with:
           name: ${{ steps.initialization.outputs.pkgbase }}.patch
-          path: '~/commit.patch'
+          path: ${{ github.workspace }}/commit.patch
 
       - name: Upload build log
         uses: actions/upload-artifact@v2
         if: ${{ always() }}
         with:
           name: ${{ steps.initialization.outputs.pkgbase }}.log
-          path: '~/build.log'
+          path: ${{ github.workspace }}/build.log
