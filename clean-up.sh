@@ -1,4 +1,4 @@
 #!/bin/sh
 set -ex
 
-pacman -Sc --noconfirm
+sudo pacman -Sc --noconfirm || :

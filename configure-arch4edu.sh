@@ -12,11 +12,11 @@ if [ -z "$imported" ]
 then
 	if [ -f /usr/share/pacman/keyrings/arch4edu-trusted ]
 	then
-		sudo pacman-key --populate arch4edu
+		fakeroot pacman-key --populate arch4edu
 	else
-		sudo pacman-key --gpgdir gnupg --recv-keys 7931B6D628C8D3BA
-		sudo pacman-key --gpgdir gnupg --finger 7931B6D628C8D3BA
-		sudo pacman-key --gpgdir gnupg --lsign-key 7931B6D628C8D3BA
+		fakeroot pacman-key --gpgdir gnupg --recv-keys 7931B6D628C8D3BA
+		fakeroot pacman-key --gpgdir gnupg --finger 7931B6D628C8D3BA
+		fakeroot pacman-key --gpgdir gnupg --lsign-key 7931B6D628C8D3BA
 	fi
 fi
 
@@ -28,4 +28,4 @@ then
 	sed 's/#//' ${GITHUB_WORKSPACE}/mirrorlist/mirrorlist.arch4edu >> pacman.conf
 fi
 
-sudo pacman -Sy --config pacman.conf --dbpath db --noprogressbar
+fakeroot pacman -Sy --config pacman.conf --dbpath db --noprogressbar
