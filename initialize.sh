@@ -3,7 +3,7 @@ set -ex
 
 pacman -Syu --noconfirm
 pacman -S --noconfirm --needed base-devel devtools dbus git \
-	jq zsh\
+	jq wget zsh\
 	pyalpm python-lxml python-requests python-toposort python-yaml
 
 sed \
