@@ -27,7 +27,6 @@ jobs:
 
       - uses: actions/checkout@master
         with:
-          repository: petronny/action-tools
           path: action-tools
 
       - uses: actions/checkout@master
