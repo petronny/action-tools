@@ -72,7 +72,7 @@ then
 		rm $i
 	done
 
-	git apply /tmp/$package.$uuid.patch
+	git am /tmp/$package.$uuid.patch
 	rm /tmp/$package.$uuid.patch
 fi
 
