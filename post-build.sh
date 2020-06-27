@@ -3,6 +3,11 @@ set -ex
 
 cd ~/arch4edu
 
+for i in $(find . -type f -name '*.pkg.tar.xz')
+do
+	xz -d --stdout $i | zstd -c -T0 --ultra -20 -o ${i%xz}zst
+done
+
 for i in $(find . -type f -name '*.pkg.tar.zst')
 do
 	filename=$(basename $i)
