@@ -49,7 +49,7 @@ jobs:
           ls -al
           set -o pipefail
           python lilac.py action | tee ${GITHUB_WORKSPACE}/build.log
-          [ ${PIPESTATUS[0]} -eq 0 ] && git format-patch HEAD~1 . --stdout > ~/commit.patch || rm -f ~/commit.patch
+          [ ${PIPESTATUS[0]} -eq 0 ] && git format-patch HEAD~1 . --stdout > ${GITHUB_WORKSPACE}/commit.patch || rm -f ${GITHUB_WORKSPACE}/commit.patch
 
       - run: post-build.sh
 
