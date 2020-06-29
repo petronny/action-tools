@@ -17,5 +17,3 @@ do
 		mv $dirname/$filename $dirname/$(echo $filename | sed 's/:/COLON/g')
 	fi
 done
-
-clean-up.sh
